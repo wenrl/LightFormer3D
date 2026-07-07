@@ -1,8 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import os
-gpu = '5'
+gpu = '0'
 os.environ["CUDA_VISIBLE_DEVICES"] = gpu
 import sys
 from torch.cuda.amp import autocast, GradScaler
@@ -22,7 +19,7 @@ from networks.SegFormer3D.segformer3d import SegFormer3D
 from networks.SlimUNETR.SlimUNETR import SlimUNETR
 from networks.nnFormer.nnFormer_seg import nnFormer
 from networks.TransBTS.TransBTS_downsample8x_skipconnection import TransBTS
-from networks.ours.atmamba import MCVUNet
+from networks.ours.Lightformer import Lite3DSegNet
 
 from monai.metrics import DiceMetric, HausdorffDistanceMetric
 from monai.losses import DiceCELoss, FocalLoss
@@ -136,8 +133,7 @@ else:
 if args.ds == 'True':
     args.ds = True
     
-## Load Networks
-# device = torch.device("cuda:0")
+
 
 if args.network == '3DUXNET_EffiDec3D':
 	model = UXNET_EffiDec3D(
@@ -191,9 +187,8 @@ elif args.network == 'MedNeXt_M_EffiDec3D':
 
 ## 3D UX-Net
 elif args.network == '3DUXNET':
-    #print(args.pretrain)
+
     if args.pretrain == True:
-        #print('here')
         model = UXNET(
             in_chans=args.n_channels,
             out_chans=args.pretrain_classes,
@@ -417,11 +412,11 @@ elif args.network == 'TransBTS':
 
 elif args.network == 'ours':
     if args.pretrain == True:
-        model = MCVUNet(in_channels=args.n_channels, out_channels=out_classes, base_dim=32)
+        model = Lite3DSegNet(in_channels=args.n_channels, out_channels=out_classes, base_dim=32)
         model.load_state_dict(torch.load(args.pretrained_weights))
         model = model.cuda()
     else:
-        model = MCVUNet(in_channels=args.n_channels, out_channels=out_classes, base_dim=32)
+        model = Lite3DSegNet(in_channels=args.n_channels, out_channels=out_classes, base_dim=32)
         model = model.cuda()
         
 
@@ -439,8 +434,8 @@ loss_function = DiceCELoss(to_onehot_y=True, softmax=True)
 loss_function2 = nn.CrossEntropyLoss()
 loss_function3 = FocalLoss(
         include_background=True,
-        to_onehot_y=True,       # 对应 to_onehot_y=True
-        use_softmax=True,       # 对应 softmax=True
+        to_onehot_y=True,
+        use_softmax=True,
         gamma=2.0,
         weight=None
     )
@@ -464,13 +459,7 @@ if os.path.exists(t_dir) == False:
 writer = SummaryWriter(log_dir=t_dir)
 
 def generate_colormap(num_classes):
-    """
-    Generate a colormap for a given number of classes using specified colors.
-    Args:
-        num_classes: Number of classes including the background.
-    Returns:
-        colormap: Dictionary mapping class indices to RGB values.
-    """
+
     # List of preferred colors for classes
     color_list = [
         (0, 0, 0),          # Background (black)

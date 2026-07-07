@@ -1,8 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import os
-gpu = '3'
+gpu = '0'
 os.environ["CUDA_VISIBLE_DEVICES"] = gpu
 
 from torch.cuda.amp import autocast, GradScaler
@@ -23,7 +20,7 @@ from networks.SlimUNETR.SlimUNETR import SlimUNETR
 from networks.nnFormer.nnFormer_seg import nnFormer ### too many device
 from networks.TransBTS.TransBTS_downsample8x_skipconnection import TransBTS
 
-from networks.ours.atmamba import MCVUNet
+from networks.ours.Lightformer import Lite3DSegNet
 
 
 from monai.metrics import DiceMetric, HausdorffDistanceMetric
@@ -421,11 +418,11 @@ elif args.network == 'TransBTS':
 
 elif args.network == 'ours':
     if args.pretrain == True:
-        model = MCVUNet(in_channels=args.n_channels, out_channels=out_classes, base_dim=32)
+        model = Lite3DSegNet(in_channels=args.n_channels, out_channels=out_classes, base_dim=32)
         model.load_state_dict(torch.load(args.pretrained_weights))
         model = model.cuda()
     else:
-        model = MCVUNet(in_channels=args.n_channels, out_channels=out_classes, base_dim=32)
+        model = Lite3DSegNet(in_channels=args.n_channels, out_channels=out_classes, base_dim=32)
         model = model.cuda()
 
      

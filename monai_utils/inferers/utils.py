@@ -1,14 +1,3 @@
-# Copyright (c) MONAI Consortium
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#     http://www.apache.org/licenses/LICENSE-2.0
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import warnings
 from typing import Any, Callable, Dict, List, Mapping, Sequence, Tuple, Union
 
@@ -136,7 +125,7 @@ def sliding_window_inference_1out(
         diff = max(roi_size[k - 2] - inputs.shape[k], 0)
         half = diff // 2
         pad_size.extend([half, diff - half])
-    #print(padding_mode)
+
     inputs = F.pad(inputs, pad=pad_size, mode='constant', value=cval) #look_up_option(padding_mode, PytorchPadMode)
 
     scan_interval = _get_scan_interval(image_size, roi_size, num_spatial_dims, overlap)
