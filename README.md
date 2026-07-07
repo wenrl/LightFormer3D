@@ -1,1 +1,1 @@
-LightFormer3D for medical image segmentation
+LightFormer3D for 3D medical image segmentation
