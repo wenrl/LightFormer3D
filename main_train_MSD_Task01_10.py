@@ -26,7 +26,6 @@ from networks.ours.Lightformer import Lite3DSegNet
 from monai.metrics import DiceMetric, HausdorffDistanceMetric
 import monai
 
-# aaa
 from monai.losses import DiceCELoss, FocalLoss
 from monai_utils.inferers.utils import sliding_window_inference_1out
 from monai.data import CacheDataset, DataLoader, decollate_batch
